@@ -1,0 +1,36 @@
+<!-- Кнопка установки -->
+<button id="installBtn" style="display:none;position:fixed;bottom:20px;right:20px;
+  padding:14px 22px;background:linear-gradient(135deg,#7e57c2,#9575cd);color:#fff;
+  border:none;border-radius:50px;font-size:1em;font-weight:600;cursor:pointer;
+  box-shadow:0 8px 25px rgba(126,87,194,.6);z-index:9999;">📲 Установить</button>
+
+<script>
+// Регистрация Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(r => console.log('✅ SW:', r.scope))
+      .catch(e => console.error('❌ SW:', e));
+  });
+}
+
+// Установка PWA
+let prompt = null;
+const btn = document.getElementById('installBtn');
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  prompt = e;
+  btn.style.display = 'block';
+});
+btn.addEventListener('click', async () => {
+  if (!prompt) return;
+  prompt.prompt();
+  await prompt.userChoice;
+  prompt = null;
+  btn.style.display = 'none';
+});
+window.addEventListener('appinstalled', () => {
+  btn.style.display = 'none';
+  console.log('✅ Установлено!');
+});
+</script>
